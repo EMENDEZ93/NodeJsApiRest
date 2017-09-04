@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/EMENDEZ93/NodeJsApiRest/issues"
   },
-  "homepage": "https://github.com/EMENDEZ93/NodeJsApiRest#readme"
+  "homepage": "https://github.com/EMENDEZ93/NodeJsApiRest#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "mysql": "^2.14.1"
+  }
 }
