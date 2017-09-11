@@ -20,6 +20,16 @@ var models = function (app,db){
 
     });
 
+    app.get('/productTable',(req,res)=>{
+        let sql = 'CREATE TABLE Product(IdProduct int NOT NULL AUTO_INCREMENT, NameProduct VARCHAR(50), ProductCost int, PRIMARY KEY (IdProduct))';
+        db.query(sql,(err,result)=>{
+            if(err)throw err;
+            console.log(result);
+            res.send('Product table created');
+        });
+
+    });
+
 
 };
 

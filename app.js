@@ -46,6 +46,8 @@ client(app,db);
 var salescheck = require('./controller/salescheck/salescheck');
 salescheck(app,db);
 
+var product = require('./controller/product/product');
+product(app,db);
 
 
 app.listen('3000',() => { 
