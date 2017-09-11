@@ -49,6 +49,8 @@ salescheck(app,db);
 var product = require('./controller/product/product');
 product(app,db);
 
+var item = require('./controller/item/item');
+item(app,db);
 
 app.listen('3000',() => { 
     console.log('Server started on por 3000');

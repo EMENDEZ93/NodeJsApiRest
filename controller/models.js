@@ -30,6 +30,15 @@ var models = function (app,db){
 
     });
 
+    app.get('/itemTable',(req,res)=>{
+        let sql = 'CREATE TABLE Item(IdSaleItem int,IdProductItem int, FOREIGN KEY (IdSaleItem) REFERENCES SalesCheck(IdSale), FOREIGN KEY (IdProductItem) REFERENCES Product(IdProduct), quantity int)';
+        db.query(sql,(err,result)=>{
+            if(err)throw err;
+            console.log(result);
+            res.send('Item table created');
+        });
+
+    });
 
 };
 
