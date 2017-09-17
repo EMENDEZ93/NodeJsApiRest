@@ -3,44 +3,25 @@ var buy = function (app,db){
     
    var CircularJSON = require('circular-json')
     
-        app.get('/item',function(req,res){
-            db.query('select * from Item', function(err,rows){
-                res.end(JSON.stringify(rows));
-            });
-        });
-    
-        app.get('/item/:IdSaleItem',function(req,res){
-            db.query('select * from Item where IdSaleItem = ?',[req.params.IdSaleItem], function(err,rows){
-                res.end(JSON.stringify(rows));
-            });
-        });
-        
-        app.delete('/client/delete/:cc',function(req,res){
-            db.query('delete from client where IdSaleItem = ?',[req.params.cc], function(err,rows){
-                res.end(JSON.stringify(rows));
-            });
-        });
-    
         app.post('/buy/add',function(req,res){  
             var name = req.body.name;
             var cc = req.body.cc;
             var product = req.body.product;
             var quantity = req.body.quantity;
-            
+            var loyalty = req.body.loyalty;
+
                 db.query('select * from client where cc = ?',[cc],  (err,rows)=>{
                     try{
                         if(rows[0].cc){
                             creatSalesCheck(rows[0].cc);                            
-                        console.log('Primero');
                         }
                     }catch(err){
                         creatClient(cc,name);                        
-                        console.log('Segundo');                        
                     }
                 });            
 
                 function creatClient(cc,name){
-                    db.query('insert into client(cc,name) values (?,?)',[cc,name], function(err,rows){
+                    db.query('insert into client(cc,name,loyalty) values (?,?,?)',[cc,name,loyalty], function(err,rows){
                         creatSalesCheck(cc);
                     });
                 }
@@ -79,7 +60,36 @@ var buy = function (app,db){
             });
         });
 
+        app.get('/oneService/:IdSaleItem',function(req,res){
+            db.query('select * from Item where IdSaleItem = ?',[req.params.IdSaleItem], function(err,rows){
+                var Items = rows;
+                db.query('select * from Product',[Items], function(err,rows){
+                    var total = 0;
+                    for(var i = 0; i < rows.length; i++) {
+                        var obj = rows[i];
+                        for(var item = 0; item < Items.length; item++) {
+                            if(rows[i].IdProduct == Items[item].IdProductItem){
+                                total +=  rows[i].ProductCost * Items[item].IdProductItem;
+                            }
+                        }
+                    }
 
+                    var check = [];                    
+                    check.push('******* Factura : ' + req.params.IdSaleItem + '*******');                        
+                    for(var i = 0; i < rows.length; i++) {
+                        var obj = rows[i];
+                        for(var item = 0; item < Items.length; item++) {
+                            if(rows[i].IdProduct == Items[item].IdProductItem){
+                                check.push( '[ Producto : ' + rows[i].NameProduct +' | Cantidad : ' + Items[item].IdProductItem+' | Und : ' + rows[i].ProductCost + ' | Venta : ' + (rows[i].ProductCost * Items[item].IdProductItem) +' ]');
+                            }
+                        }
+                    }
+                   res.send(check+('******* Valor total :' + total+'*******'));                                                                                            
+                });               
+                
+            });
+        });
+        
 
     };
     
