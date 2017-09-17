@@ -52,6 +52,9 @@ product(app,db);
 var item = require('./controller/item/item');
 item(app,db);
 
+var buy = require('./controller/buy/buy');
+buy(app,db);
+
 app.listen('3000',() => { 
     console.log('Server started on por 3000');
 });

@@ -11,7 +11,7 @@ var models = function (app,db){
     });
 
     app.get('/salescheckTable',(req,res)=>{
-        let sql = 'CREATE TABLE SalesCheck(IdSale int NOT NULL AUTO_INCREMENT, SaleDate DATETIME,SaleStatus VARCHAR(50),PRIMARY KEY (IdSale))';
+        let sql = 'CREATE TABLE SalesCheck(IdSale int NOT NULL AUTO_INCREMENT,IdCcSales int, SaleDate DATETIME,SaleStatus VARCHAR(50),PRIMARY KEY (IdSale),FOREIGN KEY (IdCcSales) REFERENCES client(cc))';
         db.query(sql,(err,result)=>{
             if(err)throw err;
             console.log(result);

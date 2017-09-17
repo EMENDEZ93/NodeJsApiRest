@@ -12,7 +12,7 @@ var item = function (app,db){
             });
         });
         
-        app.delete('/client/delete/:cc',function(req,res){
+        app.delete('/item/delete/:cc',function(req,res){
             db.query('delete from client where IdSaleItem = ?',[req.params.cc], function(err,rows){
                 res.end(JSON.stringify(rows));
             });
