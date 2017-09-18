@@ -31,7 +31,7 @@ var buy = function (app,db){
                     });                  
                     db.query('select * from SalesCheck order by IdSale desc limit 1', function(err,rows){
                         addItems(rows[0].IdSale)
-                        res.end(JSON.stringify(rows[0]));                                                
+                        //res.end(JSON.stringify(rows[0]));                                                
                     });                    
                 }
 
@@ -60,7 +60,7 @@ var buy = function (app,db){
             });
         });
 
-        app.get('/oneService/:IdSaleItem',function(req,res){
+        app.get('/firstService/:IdSaleItem',function(req,res){
             db.query('select * from Item where IdSaleItem = ?',[req.params.IdSaleItem], function(err,rows){
                 var Items = rows;
                 db.query('select * from Product',[Items], function(err,rows){
@@ -84,13 +84,18 @@ var buy = function (app,db){
                             }
                         }
                     }
-                   res.send(check+('******* Valor total :' + total+'*******'));                                                                                            
+                   db.query('select * from SalesCheck where IdSale = ?',[req.params.IdSaleItem],  (err,rows)=>{
+                       db.query('select * from client where cc = ?',[rows[0].IdCcSales],  (err,rows)=>{
+                        if(rows[0].loyalty == 'Yes' ){
+                            res.send(check+('******* Valor total | Fidelizacion : ' + (total - (total * 0.1))+' *******'+ 'Descuento 10% de : ' +total + ' *******'));                                                                                            
+                        }else{
+                            res.send(check+('******* Valor total :' + total+'*******'));                                                                                                                    
+                        }
+                       });                     
+                   });   
                 });               
-                
             });
         });
-        
-
     };
     
     module.exports = buy;
