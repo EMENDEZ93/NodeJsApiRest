@@ -80,7 +80,7 @@ var buy = function (app,db){
                         var obj = rows[i];
                         for(var item = 0; item < Items.length; item++) {
                             if(rows[i].IdProduct == Items[item].IdProductItem){
-                                check.push( '[ Producto : ' + rows[i].NameProduct +' | Cantidad : ' + Items[item].IdProductItem+' | Und : ' + rows[i].ProductCost + ' | Venta : ' + (rows[i].ProductCost * Items[item].IdProductItem) +' ]');
+                                check.push( '[ Producto : ' + rows[i].NameProduct +' | Cantidad : ' + Items[item].quantity+' | Und : ' + rows[i].ProductCost + ' | Venta : ' + (rows[i].ProductCost * Items[item].IdProductItem) +' ]');
                             }
                         }
                     }
@@ -118,7 +118,7 @@ var buy = function (app,db){
                         var obj = rows[i];
                         for(var item = 0; item < Items.length; item++) {
                             if(rows[i].IdProduct == Items[item].IdProductItem){
-                                check.push( '[ Producto : ' + rows[i].NameProduct +' | Cantidad : ' + Items[item].IdProductItem+' | Und : ' + rows[i].ProductCost + ' | Venta : ' + (rows[i].ProductCost * Items[item].IdProductItem) +' ]');
+                                check.push( '[ Producto : ' + rows[i].NameProduct +' | Cantidad : ' + Items[item].quantity+' | Und : ' + rows[i].ProductCost + ' | Venta : ' + (rows[i].ProductCost * Items[item].IdProductItem) +' ]');
                                 if(rows[i].NameProduct == 'Bolsa'){
                                     bags = Items[item].quantity;
                                 }                            
@@ -136,6 +136,46 @@ var buy = function (app,db){
             });
         });
 
+
+        app.get('/thirdService/:IdSaleItem',function(req,res){
+            db.query('select * from Item where IdSaleItem = ?',[req.params.IdSaleItem], function(err,rows){
+                var Items = rows;
+                db.query('select * from Product',[Items], function(err,rows){
+                    var total = 0;
+                    for(var i = 0; i < rows.length; i++) {
+                        var obj = rows[i];
+                        for(var item = 0; item < Items.length; item++) {
+                            if(rows[i].IdProduct == Items[item].IdProductItem){
+                                total +=  rows[i].ProductCost * Items[item].IdProductItem;
+                            }
+                        }
+                    }
+
+                    var check = [];                    
+                    var bags = 0;
+                    var quantityProduct = 0;
+                    check.push('******* Factura : ' + req.params.IdSaleItem + '*******');                        
+                    for(var i = 0; i < rows.length; i++) {
+                        var obj = rows[i];
+                        for(var item = 0; item < Items.length; item++) {
+                            if(rows[i].IdProduct == Items[item].IdProductItem){
+                                check.push( '[ Producto : ' + rows[i].NameProduct +' | Cantidad : ' + Items[item].quantity+' | Und : ' + rows[i].ProductCost + ' | Venta : ' + (rows[i].ProductCost * Items[item].IdProductItem) +' ]');
+                                if(rows[i].NameProduct == 'Bolsa'){
+                                    bags = Items[item].quantity;
+                                }else{
+                                    quantityProduct += Items[item].quantity;                                                         
+                                }      
+                            }
+                        }
+                    }
+                    if(bags > 9 || quantityProduct > 99){
+                        res.send(check+('******* Valor total | Mas 10 bolsas | Mas 100 Produtos : ' + (total+(total*0.1))+' *******'+ 'Aumento 10% de : ' +total + ' *******'));                                                                                                                                            
+                    }else{
+                        res.send(check+('******* Valor total :' + total+'*******'));                                                                                                                                                                    
+                    }
+                });               
+            });
+        });
 
     };
     
