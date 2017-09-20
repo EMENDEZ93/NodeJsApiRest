@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/EMENDEZ93/NodeJsApiRest#readme",
   "dependencies": {
+    "body-parser": "^1.16.1",
+    "circular-json": "^0.3.3",
     "express": "^4.15.4",
     "mysql": "^2.14.1"
   }

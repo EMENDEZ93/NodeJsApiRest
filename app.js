@@ -1,15 +1,23 @@
 const express = require('express');
 const mysql = require('mysql');
+var bodyParser = require('body-parser');
+const app = express();
 
-//create connection
+app.use(bodyParser.urlencoded({
+    extended:true
+}));
+app.use(bodyParser.json());
+
+
+/******************create connection*****************/
 const db = mysql.createConnection({
     host     :'localhost',
     user     :'root',
     password :'',
-    database :'nodejsapirest'
+    database :'nodejsapirest' // comment this line when creating the database for the first time
 });
 
-//connect
+/**********************connect**********************/
 db.connect((err) =>{
     if(err){
         throw err;
@@ -17,9 +25,7 @@ db.connect((err) =>{
     console.log('MySql Connected');
 });
 
-const app = express();
-
-//create db
+/**********************create db**********************/
 app.get('/createdb',(req,res) => {
     let sql = 'CREATE DATABASE nodejsapirest';
     db.query(sql, (err, result) =>{
@@ -28,6 +34,26 @@ app.get('/createdb',(req,res) => {
             res.send('Database created....');
     })
 });
+
+
+/**********************Controller**********************/
+var models = require('./controller/models');
+models(app,db);
+
+var client = require('./controller/client/client');
+client(app,db);
+
+var salescheck = require('./controller/salescheck/salescheck');
+salescheck(app,db);
+
+var product = require('./controller/product/product');
+product(app,db);
+
+var item = require('./controller/item/item');
+item(app,db);
+
+var buy = require('./controller/buy/buy');
+buy(app,db);
 
 app.listen('3000',() => { 
     console.log('Server started on por 3000');
